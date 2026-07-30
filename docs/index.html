@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ShopKurucu — Çok Kiracılı E-Ticaret Platformu</title>
+<meta name="description" content="Shopify/Ticimax mantığında, kullanıcıların kendi online mağazasını açabildiği çok kiracılı e-ticaret platformu. Next.js 16 + Drizzle ORM + Tailwind ile geliştirildi." />
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --panel: #141414;
+    --panel-border: #262626;
+    --text: #f5f5f5;
+    --muted: #a3a3a3;
+    --accent: #c026d3;
+    --accent-2: #f97316;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    line-height: 1.55;
+  }
+  a { color: inherit; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+  header.top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 0;
+  }
+  .brand { font-weight: 800; font-size: 20px; letter-spacing: -0.02em; }
+  .brand span { background: linear-gradient(90deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  nav.top a { margin-left: 22px; font-size: 14px; color: var(--muted); text-decoration: none; }
+  nav.top a:hover { color: var(--text); }
+
+  .hero { text-align: center; padding: 72px 0 56px; }
+  .hero h1 {
+    font-size: clamp(32px, 6vw, 56px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin: 0 0 20px;
+  }
+  .hero h1 .grad { background: linear-gradient(90deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero p {
+    color: var(--muted);
+    font-size: 18px;
+    max-width: 640px;
+    margin: 0 auto 32px;
+  }
+  .cta-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    display: inline-block;
+    padding: 12px 24px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 15px;
+    text-decoration: none;
+  }
+  .btn.primary { background: var(--accent); color: white; }
+  .btn.secondary { border: 1px solid var(--panel-border); color: var(--text); }
+
+  .badges { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 28px; }
+  .badge {
+    font-size: 12px;
+    color: var(--muted);
+    border: 1px solid var(--panel-border);
+    border-radius: 999px;
+    padding: 5px 12px;
+  }
+
+  section { padding: 56px 0; border-top: 1px solid var(--panel-border); }
+  section h2 { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; margin: 0 0 8px; }
+  section .lead { color: var(--muted); margin: 0 0 36px; max-width: 620px; }
+
+  .grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 16px;
+    padding: 22px;
+  }
+  .card h3 { margin: 0 0 8px; font-size: 16px; }
+  .card p { margin: 0; color: var(--muted); font-size: 14px; }
+
+  .shots { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; }
+  .shot {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .shot img { width: 100%; display: block; }
+  .shot figcaption { padding: 12px 16px; font-size: 13px; color: var(--muted); margin: 0; }
+
+  .stack-row { display: flex; flex-wrap: wrap; gap: 10px; }
+  .stack-pill {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+  }
+
+  .roadmap { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  .roadmap li {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .roadmap li strong { color: var(--text); }
+
+  pre {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    overflow-x: auto;
+    font-size: 13.5px;
+    color: #e5e5e5;
+  }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+  footer { padding: 40px 0 60px; text-align: center; color: var(--muted); font-size: 13px; }
+  .note {
+    background: rgba(192, 38, 211, 0.08);
+    border: 1px solid rgba(192, 38, 211, 0.35);
+    border-radius: 12px;
+    padding: 16px 20px;
+    font-size: 14px;
+    color: #e9d5ff;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <div class="brand">Shop<span>Kurucu</span></div>
+      <nav class="top">
+        <a href="#ozellikler">Özellikler</a>
+        <a href="#gorunum">Görünüm</a>
+        <a href="#teknoloji">Teknoloji</a>
+        <a href="#yol-haritasi">Yol Haritası</a>
+        <a href="https://github.com/">GitHub ↗</a>
+      </nav>
+    </header>
+
+    <section class="hero" style="border-top:none; padding-top:24px;">
+      <h1>Kendi <span class="grad">Shopify/Ticimax</span>'ını<br />sıfırdan inşa et</h1>
+      <p>
+        Kullanıcıların kayıt olup kendi online mağazasını açabildiği, çok kiracılı
+        (multi-tenant) bir e-ticaret SaaS platformunun açık kaynak v1 temeli.
+        Next.js 16, Drizzle ORM ve Tailwind CSS ile geliştirildi.
+      </p>
+      <div class="cta-row">
+        <a class="btn primary" href="https://github.com/">Kaynak koda git ↗</a>
+        <a class="btn secondary" href="#gorunum">Ekran görüntülerine bak</a>
+      </div>
+      <div class="badges">
+        <span class="badge">Next.js 16</span>
+        <span class="badge">TypeScript</span>
+        <span class="badge">Drizzle ORM</span>
+        <span class="badge">Tailwind CSS v4</span>
+        <span class="badge">Server Actions</span>
+        <span class="badge">MIT benzeri kullanım</span>
+      </div>
+    </section>
+
+    <section id="ozellikler">
+      <h2>Neler yapabiliyor?</h2>
+      <p class="lead">Tek bir kod tabanında birden fazla mağazayı barındıran, uçtan uca test edilmiş bir platform.</p>
+      <div class="grid3">
+        <div class="card">
+          <h3>🏪 Çok kiracılı mimari</h3>
+          <p>Her mağaza kendi alt alan adı, teması, para birimi ve diliyle izole çalışır. Paylaşımlı şema + storeId yaklaşımı.</p>
+        </div>
+        <div class="card">
+          <h3>📦 Ürün & kategori yönetimi</h3>
+          <p>Mağaza sahibi paneli üzerinden ürün, kategori, stok ve sipariş yönetimi.</p>
+        </div>
+        <div class="card">
+          <h3>🛒 Sepet & Checkout</h3>
+          <p>Misafir sepeti, adres formu, sipariş oluşturma — simüle edilmiş ödeme akışı ile uçtan uca çalışır.</p>
+        </div>
+        <div class="card">
+          <h3>🎨 Tema sistemi</h3>
+          <p>Genişletilebilir tema kaydı — mağaza sahibi ayarlardan temasını, para birimini ve dilini seçer.</p>
+        </div>
+        <div class="card">
+          <h3>🔐 Hafif oturum sistemi</h3>
+          <p>JWT tabanlı, bağımlılığı az bir auth katmanı — mağaza sahipleri ve müşteriler için ayrı oturumlar.</p>
+        </div>
+        <div class="card">
+          <h3>✅ Uçtan uca test edildi</h3>
+          <p>Playwright ile ürün gezme → sepet → checkout → admin akışlarının tamamı otomatik doğrulanıyor.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="gorunum">
+      <h2>Görünüm</h2>
+      <p class="lead">Gerçek çalışan uygulamadan alınmış ekran görüntüleri (demo mağaza verisiyle).</p>
+      <div class="shots">
+        <figure class="shot">
+          <img src="screenshots/landing.png" alt="Platform ana sayfası" loading="lazy" />
+          <figcaption>Platform ana sayfası — mağaza sahipleri için giriş noktası</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="screenshots/storefront-home.png" alt="Mağaza vitrin sayfası" loading="lazy" />
+          <figcaption>Storefront — "vivid" tema ile mağaza ana sayfası</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="screenshots/product-detail.png" alt="Ürün detay sayfası" loading="lazy" />
+          <figcaption>Ürün detayı ve sepete ekleme</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="screenshots/cart.png" alt="Sepet sayfası" loading="lazy" />
+          <figcaption>Sepet — miktar güncelleme, ürün kaldırma</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="screenshots/admin-overview.png" alt="Yönetim paneli genel bakış" loading="lazy" />
+          <figcaption>Mağaza yönetim paneli — genel bakış</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="screenshots/admin-products.png" alt="Ürün yönetimi" loading="lazy" />
+          <figcaption>Ürün listesi ve yönetimi</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="screenshots/admin-settings.png" alt="Mağaza ayarları" loading="lazy" />
+          <figcaption>Mağaza ayarları — tema, para birimi, dil</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section id="teknoloji">
+      <h2>Teknoloji</h2>
+      <p class="lead">Kurulum gerektirmeyen, hafif ve genişletilebilir bir yığın.</p>
+      <div class="stack-row">
+        <span class="stack-pill">Next.js 16 (App Router, Server Actions, Turbopack)</span>
+        <span class="stack-pill">TypeScript</span>
+        <span class="stack-pill">Drizzle ORM + SQLite</span>
+        <span class="stack-pill">Tailwind CSS v4</span>
+        <span class="stack-pill">jose (JWT) + bcryptjs</span>
+        <span class="stack-pill">zod</span>
+        <span class="stack-pill">Playwright (e2e test)</span>
+      </div>
+
+      <h2 style="margin-top:48px;">Hızlı başlangıç</h2>
+      <pre><code>git clone &lt;repo-url&gt;
+cd ecom-platform
+npm install
+npm run db:push    # SQLite şemasını oluşturur
+npm run db:seed    # demo mağaza + ürünler ekler
+npm run dev         # http://localhost:3000</code></pre>
+      <p class="lead" style="margin-top:14px;">
+        Demo giriş: <code>demo@shopkurucu.com</code> / <code>demo1234</code> —
+        demo mağaza: <code>/store/demo</code>
+      </p>
+    </section>
+
+    <section id="yol-haritasi">
+      <h2>Yol haritası</h2>
+      <p class="lead">Bu depo, sağlam bir v1 temeli. Üretim seviyesine taşımak için önerilen sıradaki adımlar:</p>
+      <ul class="roadmap">
+        <li><strong>Gerçek ödeme entegrasyonu</strong> — Stripe, iyzico veya PayTR ile checkout akışının bağlanması.</li>
+        <li><strong>Müşteri hesapları</strong> — veritabanı şeması hazır, giriş/kayıt ekranları ve sipariş geçmişi eklenmeli.</li>
+        <li><strong>Ürün varyantları</strong> — beden/renk gibi varyant bazlı stok ve fiyatlandırma.</li>
+        <li><strong>Postgres'e geçiş</strong> — üretim ölçeği için SQLite yerine Postgres.</li>
+        <li><strong>Gerçek alt alan adı / özel domain yönlendirmesi</strong> — DNS + SSL entegrasyonu.</li>
+        <li><strong>Kargo entegrasyonları, kupon/indirim akışı, gerçek kur çevirimi, görsel yükleme, e-posta bildirimleri, arama, SEO.</strong></li>
+      </ul>
+      <p class="note" style="margin-top:24px;">
+        Not: Shopify/Ticimax seviyesinde tam kapsamlı bir platform yıllar süren bir mühendislik
+        çalışmasıdır. Bu proje; mimari, veri modeli ve temel akışların (mağaza oluşturma, ürün
+        yönetimi, storefront, sepet/checkout, tema, çoklu dil/para birimi altyapısı) sağlam,
+        genişletilebilir bir v1'idir.
+      </p>
+    </section>
+
+    <footer>
+      ShopKurucu — açık kaynak bir e-ticaret platformu temeli. Detaylı kurulum ve mimari
+      dokümantasyonu için repodaki README.md dosyasına bakın.
+    </footer>
+  </div>
+</body>
+</html>
