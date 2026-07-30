@@ -42,6 +42,8 @@ export const stores = sqliteTable(
     subdomain: text("subdomain").notNull(),
     customDomain: text("custom_domain"),
     theme: text("theme").notNull().default("classic"),
+    headerStyle: text("header_style").notNull().default("classic"),
+    logoUrl: text("logo_url"),
     currency: text("currency").notNull().default("TRY"),
     language: text("language").notNull().default("tr"),
     status: text("status", { enum: ["ACTIVE", "SUSPENDED"] })

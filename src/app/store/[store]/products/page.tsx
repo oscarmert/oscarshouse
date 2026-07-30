@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { getStoreBySubdomain } from "@/lib/store";
 import { db } from "@/db";
 import { categories, products } from "@/db/schema";
-import { and, eq } from "drizzle-orm";
+import { and, eq, like } from "drizzle-orm";
 import { ProductCard } from "@/components/ProductCard";
 import { Reveal } from "@/components/Reveal";
 
@@ -12,10 +12,10 @@ export default async function StoreProductsPage({
   searchParams,
 }: {
   params: Promise<{ store: string }>;
-  searchParams: Promise<{ category?: string }>;
+  searchParams: Promise<{ category?: string; q?: string }>;
 }) {
   const { store } = await params;
-  const { category } = await searchParams;
+  const { category, q } = await searchParams;
   const storeRecord = await getStoreBySubdomain(store);
   if (!storeRecord) notFound();
 
@@ -26,6 +26,8 @@ export default async function StoreProductsPage({
     const cat = cats.find((c) => c.slug === category);
     if (cat) conditions.push(eq(products.categoryId, cat.id));
   }
+  const query = q?.trim();
+  if (query) conditions.push(like(products.title, `%${query}%`));
 
   const list = await db
     .select()
@@ -34,7 +36,17 @@ export default async function StoreProductsPage({
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-10">
-      <h1 className="text-2xl font-bold mb-6 animate-[fadeInUp_0.5s_ease-out_both]">Ürünler</h1>
+      <h1 className={`text-2xl font-bold animate-[fadeInUp_0.5s_ease-out_both] ${query ? "mb-2" : "mb-6"}`}>
+        Ürünler
+      </h1>
+      {query && (
+        <p className="text-sm text-neutral-500 mb-6 animate-[fadeInUp_0.4s_ease-out_both]">
+          &quot;{query}&quot; için {list.length} sonuç bulundu.{" "}
+          <a href={`/store/${store}/products`} className="underline hover:text-neutral-700">
+            Aramayı temizle
+          </a>
+        </p>
+      )}
 
       {cats.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-8">
@@ -65,7 +77,9 @@ export default async function StoreProductsPage({
       )}
 
       {list.length === 0 ? (
-        <p className="text-neutral-500">Bu kategoride ürün bulunamadı.</p>
+        <p className="text-neutral-500">
+          {query ? "Aramanızla eşleşen ürün bulunamadı." : "Bu kategoride ürün bulunamadı."}
+        </p>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
           {list.map((p, i) => (

@@ -129,6 +129,8 @@ export async function deleteCategoryAction(subdomain: string, categoryId: string
   revalidatePath(`/admin/${subdomain}/categories`);
 }
 
+const MAX_LOGO_BYTES = 1.5 * 1024 * 1024; // 1.5MB — base64 data URL, no object storage in this project
+
 export async function updateStoreSettingsAction(
   subdomain: string,
   _prev: FormState,
@@ -137,17 +139,39 @@ export async function updateStoreSettingsAction(
   const store = await requireStoreOwner(subdomain);
   const name = String(formData.get("name") || "").trim();
   const theme = String(formData.get("theme") || "classic");
+  const headerStyle = String(formData.get("headerStyle") || "classic");
   const currency = String(formData.get("currency") || "TRY");
   const language = String(formData.get("language") || "tr");
 
   if (name.length < 2) return { fieldErrors: { name: "Mağaza adı en az 2 karakter olmalı" } };
 
-  await db
-    .update(stores)
-    .set({ name, theme, currency, language })
-    .where(eq(stores.id, store.id));
+  const updates: {
+    name: string;
+    theme: string;
+    headerStyle: string;
+    currency: string;
+    language: string;
+    logoUrl?: string | null;
+  } = { name, theme, headerStyle, currency, language };
+
+  const logoFile = formData.get("logo");
+  const removeLogo = formData.get("removeLogo") === "on";
+  if (logoFile instanceof File && logoFile.size > 0) {
+    if (!logoFile.type.startsWith("image/")) {
+      return { fieldErrors: { logo: "Logo bir görsel dosyası olmalı (PNG, JPG, SVG...)" } };
+    }
+    if (logoFile.size > MAX_LOGO_BYTES) {
+      return { fieldErrors: { logo: "Logo dosyası 1.5MB'tan küçük olmalı" } };
+    }
+    const buffer = Buffer.from(await logoFile.arrayBuffer());
+    updates.logoUrl = `data:${logoFile.type};base64,${buffer.toString("base64")}`;
+  } else if (removeLogo) {
+    updates.logoUrl = null;
+  }
+
+  await db.update(stores).set(updates).where(eq(stores.id, store.id));
 
   revalidatePath(`/admin/${subdomain}/settings`);
-  revalidatePath(`/store/${subdomain}`);
+  revalidatePath(`/store/${subdomain}`, "layout");
   return {};
 }
