@@ -26,8 +26,14 @@ function Logo({
       {logoUrl ? (
         // Store owner-uploaded logo (stored as a data URL — no object storage
         // configured for this project, so base64 is embedded directly).
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={logoUrl} alt={storeName} className="h-8 w-auto object-contain" />
+        // Fixed-size box regardless of the uploaded image's own dimensions —
+        // object-contain keeps the aspect ratio without stretching, so every
+        // logo (square, wide, tall, tiny, huge) renders at the same standard
+        // size in the header.
+        <span className="inline-flex items-center justify-center h-9 w-9 overflow-hidden align-middle">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={logoUrl} alt={storeName} className="max-h-full max-w-full object-contain" />
+        </span>
       ) : (
         storeName
       )}
