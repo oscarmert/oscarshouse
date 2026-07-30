@@ -2,13 +2,20 @@ import { config as loadEnv } from "dotenv";
 loadEnv({ path: ".env.local" });
 loadEnv();
 
-import { db } from "./index";
 import { users, stores, categories, products } from "./schema";
 import { createId } from "../lib/id";
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 
+// NOTE: `./index` (the db client) is imported dynamically, AFTER the
+// dotenv calls above have run. Static `import` statements are hoisted
+// above all other top-level code — including these loadEnv() calls, even
+// though they're written first — so a static `import { db } from "./index"`
+// here would evaluate db/index.ts (and decide Turso vs. local SQLite)
+// before TURSO_DATABASE_URL is actually set on process.env. A dynamic
+// import() runs at this exact point in execution, so it sees the env vars.
 async function main() {
+  const { db } = await import("./index");
   const email = "demo@shopkurucu.com";
   const [existing] = await db.select().from(users).where(eq(users.email, email)).limit(1);
   if (existing) {

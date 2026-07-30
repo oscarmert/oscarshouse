@@ -105,6 +105,25 @@ kalıcı bir veritabanı için [Turso](https://turso.tech) kullanabilirsiniz
 > her ortamda (yerel makine, prod hosting) bu değişkenleri ayrı ayrı
 > tanımlamanız gerekir.
 
+## Canlıya alma (Vercel)
+
+1. [vercel.com](https://vercel.com) üzerinde GitHub hesabınızla giriş yapın.
+2. **Add New → Project**, `oscarmert/oscarshouse` reposunu seçip **Import**.
+3. Deploy etmeden önce **Environment Variables** kısmına şunları ekleyin:
+   - `TURSO_DATABASE_URL` — Turso panelinizden aldığınız URL
+   - `TURSO_AUTH_TOKEN` — Turso panelinizden aldığınız token
+   - `SESSION_SECRET` — rastgele, uzun bir metin (`openssl rand -hex 32` ile
+     üretebilirsiniz). **Bu olmadan** oturum imzalama herkese açık, sabit bir
+     anahtarla yapılır — canlıda mutlaka tanımlayın.
+4. **Deploy**'a basın. Birkaç dakika içinde `https://<proje-adiniz>.vercel.app`
+   adresinde yayında olacak.
+5. Her `git push` sonrası Vercel otomatik olarak yeniden deploy eder.
+
+> Not: Şu an mağazalara `alanadi.com/store/<magaza>` gibi path üzerinden
+> erişiliyor (`demo.alanadi.com` gibi gerçek alt alan adı yönlendirmesi,
+> özel domain bağladığınızda `src/proxy.ts` içindeki `ROOT_DOMAINS`'e
+> ekleyerek aktif olur — bu adım şimdilik v1 kapsamı dışında).
+
 ## Uçtan uca test
 
 `scripts/e2e-check.mjs`, Playwright ile tüm ana akışı (ürün gezme → sepete

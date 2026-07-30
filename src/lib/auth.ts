@@ -2,6 +2,15 @@ import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import bcrypt from "bcryptjs";
 
+if (!process.env.SESSION_SECRET && process.env.NODE_ENV === "production") {
+  console.warn(
+    "[auth] SESSION_SECRET is not set — falling back to a hardcoded, publicly-" +
+      "known dev secret. Anyone can forge login sessions for your live site. " +
+      "Set a random SESSION_SECRET env var (e.g. `openssl rand -hex 32`) " +
+      "before shipping to real users."
+  );
+}
+
 const secretKey = process.env.SESSION_SECRET || "dev-only-insecure-secret-change-me";
 const encodedKey = new TextEncoder().encode(secretKey);
 

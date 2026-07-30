@@ -1,6 +1,5 @@
 import path from "node:path";
 import fs from "node:fs";
-import { createRequire } from "node:module";
 import { createClient } from "@libsql/client";
 import { drizzle as drizzleLibsql } from "drizzle-orm/libsql";
 import type { LibSQLDatabase } from "drizzle-orm/libsql";
@@ -14,16 +13,31 @@ import * as schema from "./schema";
 // Both are plain SQLite under the hood, so the same Drizzle schema
 // (sqlite-core) and every query in the app work unchanged either way.
 //
-// better-sqlite3 is only require()'d lazily inside createLocalDb() below —
-// it has a native binding that needs a working node-gyp/Python toolchain to
-// compile. If you're only ever using Turso (TURSO_DATABASE_URL set), that
-// binding is never touched, so `npm install` failing to build it (common on
-// Windows without Python/Visual Studio build tools installed) doesn't block
-// you — it's an optionalDependency in package.json for the same reason.
+// better-sqlite3 is an optionalDependency (its native binding needs a
+// working node-gyp/Python toolchain, which e.g. plain Windows without
+// Visual Studio build tools doesn't have) — if you're only ever using Turso
+// (TURSO_DATABASE_URL set), it may not be installed at all, and that's fine.
+// The tricky part: Next.js's bundler (Turbopack/webpack) statically scans
+// source text for `require("literal")` / `import ... from "literal"` and
+// tries to resolve every one it finds — including ones inside an
+// if-branch that never runs — and hard-fails the whole build/dev-server if
+// the module isn't on disk. A plain `require("better-sqlite3")` guarded by
+// `if (!tursoUrl)` is NOT enough to avoid this. `require("drizzle-orm/
+// better-sqlite3")` isn't safe either: that package IS always installed
+// (it's part of drizzle-orm), so the bundler happily opens it — and its
+// own internal driver file does an unconditional `require("better-sqlite3")`
+// that we don't control, which then fails the same way.
+// The fix used below (`eval("require")`) obtains the real Node `require`
+// through an expression bundlers don't statically parse as a module
+// request, so neither module is ever added to the build graph unless this
+// code path actually executes at runtime.
+function nodeRequire(specifier: string): unknown {
+  // eslint-disable-next-line no-eval
+  return eval("require")(specifier);
+}
 
 const tursoUrl = process.env.TURSO_DATABASE_URL;
 const tursoToken = process.env.TURSO_AUTH_TOKEN;
-const require = createRequire(import.meta.url);
 
 type LocalSqliteHandle = { pragma: (sql: string) => unknown };
 
@@ -47,10 +61,10 @@ function createTursoDb(): LibSQLDatabase<typeof schema> {
 }
 
 function createLocalDb(): LibSQLDatabase<typeof schema> {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const Database = require("better-sqlite3");
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { drizzle: drizzleSqlite } = require("drizzle-orm/better-sqlite3");
+  const Database = nodeRequire("better-sqlite3") as new (path: string) => LocalSqliteHandle;
+  const { drizzle: drizzleSqlite } = nodeRequire("drizzle-orm/better-sqlite3") as {
+    drizzle: (db: unknown, opts: { schema: typeof schema }) => unknown;
+  };
 
   const dataDir = path.join(process.cwd(), "data");
   if (!fs.existsSync(dataDir)) {
