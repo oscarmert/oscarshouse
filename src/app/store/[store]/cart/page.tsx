@@ -21,17 +21,20 @@ export default async function CartPage({
 
   return (
     <div className="max-w-3xl mx-auto px-6 py-10">
-      <h1 className="text-2xl font-bold mb-6">Sepetiniz</h1>
+      <h1 className="text-2xl font-bold mb-6 animate-[fadeInUp_0.5s_ease-out_both]">Sepetiniz</h1>
 
       {items.length === 0 ? (
-        <div className="text-center py-16">
+        <div className="text-center py-16 animate-[fadeInUp_0.5s_ease-out_both]">
           <p className="text-neutral-500 mb-4">Sepetiniz boş.</p>
-          <Link href={`/store/${store}/products`} className="text-neutral-900 font-medium hover:underline">
+          <Link
+            href={`/store/${store}/products`}
+            className="text-neutral-900 font-medium hover:underline underline-offset-4"
+          >
             Ürünlere göz atın →
           </Link>
         </div>
       ) : (
-        <>
+        <div className="animate-[fadeInUp_0.4s_ease-out_both]">
           <div className="bg-white border border-neutral-200 rounded-xl px-5">
             {items.map((item) => (
               <CartItemRow
@@ -50,11 +53,11 @@ export default async function CartPage({
 
           <Link
             href={`/store/${store}/checkout`}
-            className={`mt-6 block text-center ${theme.buttonBg} ${theme.buttonText} py-3 rounded-lg font-medium`}
+            className={`mt-6 block text-center ${theme.buttonBg} ${theme.buttonText} py-3 rounded-lg font-medium transition-all hover:shadow-lg active:scale-[0.98]`}
           >
             Ödemeye geç
           </Link>
-        </>
+        </div>
       )}
     </div>
   );

@@ -22,16 +22,16 @@ export default async function CheckoutPage({
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-10 grid sm:grid-cols-2 gap-10">
-      <div>
+      <div className="animate-[fadeInUp_0.5s_ease-out_both]">
         <h1 className="text-2xl font-bold mb-6">Teslimat & Ödeme</h1>
         <CheckoutForm action={action} buttonClass={`${theme.buttonBg} ${theme.buttonText}`} />
       </div>
 
-      <div>
+      <div className="animate-[fadeInUp_0.5s_ease-out_0.1s_both]">
         <h2 className="font-semibold mb-4">Sipariş özeti</h2>
         <div className="bg-white border border-neutral-200 rounded-xl divide-y divide-neutral-100">
           {items.map((item) => (
-            <div key={item.id} className="flex justify-between px-4 py-3 text-sm">
+            <div key={item.id} className="flex justify-between px-4 py-3 text-sm transition-colors hover:bg-neutral-50">
               <span>
                 {item.title} × {item.quantity}
               </span>

@@ -21,7 +21,11 @@ export function CartItemRow({
   };
 
   return (
-    <div className="flex items-center gap-4 py-4 border-b border-neutral-100 last:border-0">
+    <div
+      className={`flex items-center gap-4 py-4 border-b border-neutral-100 last:border-0 -mx-2 px-2 rounded-lg transition-all duration-200 hover:bg-neutral-50 ${
+        pending ? "opacity-60" : ""
+      }`}
+    >
       <div className="w-16 h-16 bg-neutral-100 rounded-lg overflow-hidden flex items-center justify-center shrink-0">
         {item.imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -37,15 +41,15 @@ export function CartItemRow({
       <div className="flex items-center gap-2" aria-disabled={pending}>
         <button
           onClick={() => setQty(item.quantity - 1)}
-          className="w-7 h-7 border border-neutral-300 rounded-full disabled:opacity-50"
+          className="w-7 h-7 border border-neutral-300 rounded-full hover:bg-neutral-100 hover:border-neutral-400 active:scale-90 transition-all disabled:opacity-50"
           disabled={pending}
         >
           −
         </button>
-        <span className="w-6 text-center">{item.quantity}</span>
+        <span className="w-6 text-center tabular-nums">{item.quantity}</span>
         <button
           onClick={() => setQty(item.quantity + 1)}
-          className="w-7 h-7 border border-neutral-300 rounded-full disabled:opacity-50"
+          className="w-7 h-7 border border-neutral-300 rounded-full hover:bg-neutral-100 hover:border-neutral-400 active:scale-90 transition-all disabled:opacity-50"
           disabled={pending}
         >
           +
@@ -55,7 +59,7 @@ export function CartItemRow({
       <button
         onClick={() => setQty(0)}
         disabled={pending}
-        className="text-red-500 text-sm hover:underline ml-2"
+        className="text-red-500 text-sm hover:underline underline-offset-4 ml-2 transition-opacity hover:opacity-70"
       >
         Kaldır
       </button>

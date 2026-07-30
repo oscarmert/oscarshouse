@@ -31,19 +31,19 @@ export default async function CheckoutSuccessPage({
 
   return (
     <div className="max-w-lg mx-auto px-6 py-20 text-center">
-      <div className="w-14 h-14 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-2xl mx-auto mb-6">
+      <div className="w-14 h-14 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-2xl mx-auto mb-6 animate-[popIn_0.5s_ease-out_both]">
         ✓
       </div>
-      <h1 className="text-2xl font-bold">Siparişiniz alındı!</h1>
-      <p className="mt-2 text-neutral-500">
+      <h1 className="text-2xl font-bold animate-[fadeInUp_0.4s_ease-out_0.15s_both]">Siparişiniz alındı!</h1>
+      <p className="mt-2 text-neutral-500 animate-[fadeInUp_0.4s_ease-out_0.25s_both]">
         Sipariş #{order.id.slice(-8)} — {formatMoney(order.total, order.currency)}
       </p>
-      <p className="mt-1 text-neutral-500 text-sm">
+      <p className="mt-1 text-neutral-500 text-sm animate-[fadeInUp_0.4s_ease-out_0.3s_both]">
         Sipariş onayı {order.customerEmail} adresine gönderilecek.
       </p>
       <Link
         href={`/store/${store}/products`}
-        className="inline-block mt-8 bg-neutral-900 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-neutral-800"
+        className="inline-block mt-8 bg-neutral-900 text-white px-6 py-2.5 rounded-lg font-medium transition-all hover:bg-neutral-800 hover:shadow-lg active:scale-95 animate-[fadeInUp_0.4s_ease-out_0.4s_both]"
       >
         Alışverişe devam et
       </Link>

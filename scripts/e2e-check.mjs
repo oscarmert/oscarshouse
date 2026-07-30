@@ -23,7 +23,7 @@ page.on("console", (msg) => {
 
 // 1. Landing page
 await page.goto(BASE + "/");
-check("Landing page loads", await page.locator("text=ShopKurucu").first().isVisible());
+check("Landing page loads", await page.locator("text=oscarshouse").first().isVisible());
 await page.screenshot({ path: `${shotDir}/01-landing.png` });
 
 // 2. Demo storefront home
@@ -39,10 +39,17 @@ await page.screenshot({ path: `${shotDir}/03-products.png`, fullPage: true });
 
 // 4. Product detail + add to cart
 await page.locator("a[href*='/products/']").first().click();
+// Dev-mode Turbopack compiles routes on first visit, which can take longer
+// than a plain "networkidle" wait — wait for the actual URL change instead
+// (mirrors the checkout-success wait below), then settle network.
+await page.waitForURL(/\/products\/[^/]+$/, { timeout: 15000 });
 await page.waitForLoadState("networkidle");
-check("Product detail loads", await page.locator("button:has-text('Sepete ekle')").isVisible());
+// exact: true avoids matching the product-card "Hızlı sepete ekle" quick-add
+// buttons, which also contain the substring "Sepete ekle".
+const addToCartBtn = page.getByRole("button", { name: "Sepete ekle", exact: true });
+check("Product detail loads", await addToCartBtn.isVisible());
 await page.screenshot({ path: `${shotDir}/04-product-detail.png` });
-await page.locator("button:has-text('Sepete ekle')").click();
+await addToCartBtn.click();
 await page.waitForLoadState("networkidle");
 await page.waitForTimeout(500);
 
