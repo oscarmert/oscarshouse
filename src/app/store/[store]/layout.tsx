@@ -41,7 +41,7 @@ export default async function StorefrontLayout({
       </header>
       <main className="flex-1">{children}</main>
       <footer className="border-t border-neutral-200 py-8 text-center text-sm text-neutral-500">
-        © {new Date().getFullYear()} {storeRecord.name} — ShopKurucu ile oluşturuldu
+        © {new Date().getFullYear()} {storeRecord.name} — oscarshouse ile oluşturuldu
       </footer>
     </div>
   );

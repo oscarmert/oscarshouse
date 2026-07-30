@@ -37,7 +37,7 @@ export default async function DashboardPage() {
             >
               <div>
                 <p className="font-semibold">{store.name}</p>
-                <p className="text-sm text-neutral-500">{store.subdomain}.shopkurucu.com</p>
+                <p className="text-sm text-neutral-500">{store.subdomain}.oscarshouse.com</p>
               </div>
               <div className="flex gap-3 text-sm">
                 <Link href={`/store/${store.subdomain}`} className="text-neutral-500 hover:underline">

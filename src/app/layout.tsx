@@ -8,7 +8,7 @@ import "./globals.css";
 // webfont, use `next/font/local` with a self-hosted font file.
 
 export const metadata: Metadata = {
-  title: "ShopKurucu — Kendi mağazanı dakikalar içinde aç",
+  title: "oscarshouse — Kendi mağazanı dakikalar içinde aç",
   description: "Shopify/Ticimax mantığında çok kiracılı e-ticaret platformu",
 };
 

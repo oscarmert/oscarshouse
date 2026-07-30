@@ -88,7 +88,7 @@ export function SignupForm() {
             pattern="[a-z0-9-]+"
             className="flex-1 px-3 py-2 focus:outline-none"
           />
-          <span className="px-3 text-neutral-500 text-sm bg-neutral-50">.shopkurucu.com</span>
+          <span className="px-3 text-neutral-500 text-sm bg-neutral-50">.oscarshouse.com</span>
         </div>
         {state?.fieldErrors?.subdomain && (
           <p className="text-red-600 text-sm mt-1">{state.fieldErrors.subdomain}</p>

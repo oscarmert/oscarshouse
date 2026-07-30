@@ -1,4 +1,4 @@
-# ShopKurucu — Çok Kiracılı E-Ticaret Platformu (v1)
+# oscarshouse — Çok Kiracılı E-Ticaret Platformu (v1)
 
 Shopify / Ticimax mantığında, kullanıcıların kayıt olup kendi online mağazalarını
 açabildiği çok kiracılı (multi-tenant) bir e-ticaret SaaS platformunun **v1

@@ -25,7 +25,7 @@ export default async function AdminLayout({
       <aside className="w-60 shrink-0 bg-neutral-900 text-white flex flex-col">
         <div className="px-5 py-5 border-b border-neutral-800">
           <p className="font-bold truncate">{storeRecord.name}</p>
-          <p className="text-xs text-neutral-400 truncate">{storeRecord.subdomain}.shopkurucu.com</p>
+          <p className="text-xs text-neutral-400 truncate">{storeRecord.subdomain}.oscarshouse.com</p>
         </div>
         <nav className="flex-1 px-3 py-4 space-y-1">
           {navItems.map((item) => (

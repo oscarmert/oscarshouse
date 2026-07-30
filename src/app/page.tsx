@@ -4,7 +4,7 @@ export default function LandingPage() {
   return (
     <main className="flex-1 bg-neutral-950 text-white">
       <header className="max-w-6xl mx-auto flex items-center justify-between px-6 py-6">
-        <span className="text-xl font-bold tracking-tight">ShopKurucu</span>
+        <span className="text-xl font-bold tracking-tight">oscarshouse</span>
         <nav className="flex items-center gap-4 text-sm">
           <Link href="/login" className="hover:underline">
             Giriş yap
@@ -20,7 +20,7 @@ export default function LandingPage() {
 
       <section className="max-w-4xl mx-auto text-center px-6 pt-20 pb-24">
         <h1 className="text-4xl sm:text-6xl font-bold tracking-tight">
-          Kendi online mağazanı <span className="text-fuchsia-500">dakikalar içinde</span> aç
+          Kendi online mağazanı <span className="text-neutral-400">dakikalar içinde</span> aç
         </h1>
         <p className="mt-6 text-lg text-neutral-300 max-w-2xl mx-auto">
           Ürünlerini listele, sepet ve ödeme akışını kur, temanı seç — Shopify ve Ticimax&apos;ın
@@ -29,7 +29,7 @@ export default function LandingPage() {
         <div className="mt-10 flex items-center justify-center gap-4">
           <Link
             href="/signup"
-            className="bg-fuchsia-600 hover:bg-fuchsia-500 px-8 py-3 rounded-full font-semibold text-lg"
+            className="bg-white text-neutral-900 hover:bg-neutral-200 px-8 py-3 rounded-full font-semibold text-lg"
           >
             Mağazanı ücretsiz kur
           </Link>
