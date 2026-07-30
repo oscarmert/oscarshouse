@@ -1,3 +1,7 @@
+import { config as loadEnv } from "dotenv";
+loadEnv({ path: ".env.local" });
+loadEnv();
+
 import { db } from "./index";
 import { users, stores, categories, products } from "./schema";
 import { createId } from "../lib/id";

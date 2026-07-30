@@ -14,9 +14,11 @@ mimari + çalışan bir uçtan uca akış sunar.
 ## Teknoloji yığını
 
 - **Next.js 16** (App Router, Server Actions, Turbopack) + TypeScript
-- **Drizzle ORM** + **SQLite** (better-sqlite3) — tek dosyalık, kuruluma
-  gerektirmeyen bir veritabanı. Prod'da Postgres'e geçmek birkaç satır
-  (bkz. Yol Haritası).
+- **Drizzle ORM** + **SQLite** — iki sürücü destekleniyor: yerelde
+  `better-sqlite3` (kuruluma gerek yok, `data/app.db` dosyası) veya gerçek/
+  kalıcı bir veritabanı için **Turso** (libSQL, `@libsql/client`). Hangisinin
+  kullanılacağı `TURSO_DATABASE_URL` ortam değişkeninin varlığına göre otomatik
+  seçilir (bkz. "Turso ile gerçek veritabanı" bölümü).
 - **Tailwind CSS v4**
 - Kendi yazdığımız hafif **JWT tabanlı oturum** sistemi (`jose` + `bcryptjs`) —
   mağaza sahipleri için `platform_session`, müşteriler için mağaza bazlı
@@ -57,7 +59,7 @@ mimari + çalışan bir uçtan uca akış sunar.
 
 ```bash
 npm install
-npm run db:push    # SQLite şemasını oluşturur (data/app.db)
+npm run db:push    # şemayı oluşturur (yerel SQLite veya Turso, aşağıya bakın)
 npm run db:seed    # demo mağaza + ürünler ekler
 npm run dev
 ```
@@ -67,6 +69,41 @@ Tarayıcıda:
 - `http://localhost:3000/store/demo` — demo mağaza (storefront)
 - `http://localhost:3000/login` — demo giriş: **demo@shopkurucu.com / demo1234**
 - `http://localhost:3000/admin/demo` — demo mağaza yönetim paneli
+
+## Turso ile gerçek (kalıcı) veritabanı
+
+Varsayılan olarak proje, `.env.local` içinde `TURSO_DATABASE_URL` yoksa
+otomatik olarak yerel `data/app.db` dosyasını kullanır — hızlı denemeler için
+idealdir ama kalıcı değildir (özellikle geçici/serverless ortamlarda). Gerçek,
+kalıcı bir veritabanı için [Turso](https://turso.tech) kullanabilirsiniz
+(ücretsiz katmanı bu proje için fazlasıyla yeterli):
+
+1. [app.turso.tech](https://app.turso.tech) üzerinden ücretsiz hesap açın, yeni
+   bir veritabanı oluşturun.
+2. Veritabanının **Database URL**'ini (`libsql://...`) ve bir **Auth Token**
+   oluşturup projenin kök dizininde `.env.local` dosyasına ekleyin:
+
+   ```bash
+   TURSO_DATABASE_URL=libsql://<veritabani-adiniz>.turso.io
+   TURSO_AUTH_TOKEN=<token>
+   ```
+
+3. Şemayı ve demo verisini oluşturun:
+
+   ```bash
+   npm run db:push
+   npm run db:seed
+   ```
+
+   `db:push` ve `db:seed`, `TURSO_DATABASE_URL` tanımlıysa otomatik olarak
+   Turso'ya bağlanır — kod tarafında başka hiçbir değişiklik gerekmez.
+4. `npm run dev` (veya prod'a deploy ederken hosting platformunuzda aynı iki
+   ortam değişkenini tanımlayın) — uygulama artık kalıcı, bulut tabanlı bir
+   veritabanı kullanıyor.
+
+> Not: `.env.local` `.gitignore` içinde olduğu için asla GitHub'a gönderilmez —
+> her ortamda (yerel makine, prod hosting) bu değişkenleri ayrı ayrı
+> tanımlamanız gerekir.
 
 ## Uçtan uca test
 
@@ -93,7 +130,8 @@ platformu için önerilen sıralama:
    çalışıyor. Müşteri girişini eklemek, sipariş geçmişi sayfası gibi
    özellikleri mümkün kılar.
 3. **Ürün varyantları** (beden/renk gibi) ve gerçek stok/SKU yönetimi.
-4. **Postgres'e geçiş** — prod ölçek için SQLite yerine Postgres + Drizzle
+4. **Postgres'e geçiş** — Turso/SQLite bu proje için yeterli olsa da, çok daha
+   büyük ölçekte Postgres + Drizzle'a geçiş de mümkündür
    (`drizzle-orm/node-postgres` sürücüsüne geçmek birkaç satırlık değişiklik).
 5. **Gerçek alt alan adı / özel domain yönlendirmesi** — `src/proxy.ts` içinde
    altyapı hazır; DNS + SSL (ör. Vercel'in wildcard domain desteği veya
