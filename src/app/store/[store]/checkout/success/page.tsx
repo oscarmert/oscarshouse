@@ -38,6 +38,12 @@ export default async function CheckoutSuccessPage({
       <p className="mt-2 text-neutral-500 animate-[fadeInUp_0.4s_ease-out_0.25s_both]">
         Sipariş #{order.id.slice(-8)} — {formatMoney(order.total, order.currency)}
       </p>
+      {order.discountTotal > 0 && (
+        <p className="mt-1 text-sm text-green-700 animate-[fadeInUp_0.4s_ease-out_0.28s_both]">
+          İndirim uygulandı: -{formatMoney(order.discountTotal, order.currency)} (ara toplam{" "}
+          {formatMoney(order.subtotal, order.currency)})
+        </p>
+      )}
       <p className="mt-1 text-neutral-500 text-sm animate-[fadeInUp_0.4s_ease-out_0.3s_both]">
         Sipariş onayı {order.customerEmail} adresine gönderilecek.
       </p>

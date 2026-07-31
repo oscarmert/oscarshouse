@@ -109,6 +109,7 @@ export async function createCategoryAction(
 ): Promise<FormState> {
   const store = await requireStoreOwner(subdomain);
   const name = String(formData.get("name") || "").trim();
+  const imageUrl = String(formData.get("imageUrl") || "").trim() || null;
   if (name.length < 2) return { fieldErrors: { name: "Kategori adı en az 2 karakter olmalı" } };
 
   let slug = slugify(name);
@@ -119,14 +120,27 @@ export async function createCategoryAction(
     .limit(1);
   if (clash) slug = `${slug}-${randomSuffix()}`;
 
-  await db.insert(categories).values({ id: createId("cat"), storeId: store.id, name, slug });
+  await db.insert(categories).values({ id: createId("cat"), storeId: store.id, name, slug, imageUrl });
   revalidatePath(`/admin/${subdomain}/categories`);
+  revalidatePath(`/store/${subdomain}`);
+}
+
+export async function updateCategoryImageAction(subdomain: string, categoryId: string, formData: FormData) {
+  const store = await requireStoreOwner(subdomain);
+  const imageUrl = String(formData.get("imageUrl") || "").trim() || null;
+  await db
+    .update(categories)
+    .set({ imageUrl })
+    .where(and(eq(categories.id, categoryId), eq(categories.storeId, store.id)));
+  revalidatePath(`/admin/${subdomain}/categories`);
+  revalidatePath(`/store/${subdomain}`);
 }
 
 export async function deleteCategoryAction(subdomain: string, categoryId: string) {
   const store = await requireStoreOwner(subdomain);
   await db.delete(categories).where(and(eq(categories.id, categoryId), eq(categories.storeId, store.id)));
   revalidatePath(`/admin/${subdomain}/categories`);
+  revalidatePath(`/store/${subdomain}`);
 }
 
 const MAX_LOGO_BYTES = 1.5 * 1024 * 1024; // 1.5MB — base64 data URL, no object storage in this project

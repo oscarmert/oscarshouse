@@ -82,6 +82,18 @@ export function CheckoutForm({
         </div>
       </div>
 
+      <div>
+        <label className="block text-sm font-medium mb-1">İndirim kodu (opsiyonel)</label>
+        <input
+          name="discountCode"
+          placeholder="Örn. HOSGELDIN10"
+          className="w-full rounded-lg border border-neutral-300 px-3 py-2 uppercase placeholder:normal-case transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-neutral-900/10 focus:border-neutral-400"
+        />
+        {state?.fieldErrors?.discountCode && (
+          <p className="text-red-600 text-sm mt-1">{state.fieldErrors.discountCode}</p>
+        )}
+      </div>
+
       <p className="text-xs text-neutral-500">
         Bu bir demo ödeme akışıdır — gerçek bir ödeme sağlayıcısına bağlı değildir, sipariş anında
         &quot;ödendi&quot; olarak işaretlenir.

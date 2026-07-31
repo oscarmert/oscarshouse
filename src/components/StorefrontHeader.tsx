@@ -29,8 +29,9 @@ function Logo({
         // Fixed-size box regardless of the uploaded image's own dimensions —
         // object-contain keeps the aspect ratio without stretching, so every
         // logo (square, wide, tall, tiny, huge) renders at the same standard
-        // size in the header.
-        <span className="inline-flex items-center justify-center h-9 w-9 overflow-hidden align-middle">
+        // size. Responsive: scales up on larger viewports (e.g. a big 27"
+        // monitor) instead of staying pinned to a small mobile-sized box.
+        <span className="inline-flex items-center justify-center h-11 w-11 sm:h-12 sm:w-12 lg:h-14 lg:w-14 xl:h-16 xl:w-16 overflow-hidden align-middle shrink-0">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={logoUrl} alt={storeName} className="max-h-full max-w-full object-contain" />
         </span>

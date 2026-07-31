@@ -13,7 +13,7 @@ export function CategoryForm({
   const [state, formAction, pending] = useActionState(action, initialState);
 
   return (
-    <form action={formAction} className="flex gap-3">
+    <form action={formAction} className="flex flex-col sm:flex-row gap-3">
       <div className="flex-1">
         <input
           name="name"
@@ -24,6 +24,13 @@ export function CategoryForm({
         {state?.fieldErrors?.name && (
           <p className="text-red-600 text-sm mt-1">{state.fieldErrors.name}</p>
         )}
+      </div>
+      <div className="flex-1">
+        <input
+          name="imageUrl"
+          placeholder="Görsel URL (opsiyonel)"
+          className="w-full rounded-lg border border-neutral-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-neutral-900"
+        />
       </div>
       <button
         type="submit"

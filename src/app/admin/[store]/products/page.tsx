@@ -52,7 +52,21 @@ export default async function ProductsPage({
                 <tr key={p.id} className="border-t border-neutral-100">
                   <td className="px-5 py-3 font-medium">{p.title}</td>
                   <td className="px-5 py-3">{formatMoney(p.price, storeRecord.currency)}</td>
-                  <td className="px-5 py-3">{p.inventory}</td>
+                  <td className="px-5 py-3">
+                    <span className={p.inventory === 0 ? "text-red-600 font-medium" : p.inventory <= 5 ? "text-amber-600 font-medium" : ""}>
+                      {p.inventory}
+                    </span>
+                    {p.status === "ACTIVE" && p.inventory === 0 && (
+                      <span className="ml-2 text-xs font-medium px-2 py-0.5 rounded-full bg-red-50 text-red-700">
+                        Tükendi
+                      </span>
+                    )}
+                    {p.status === "ACTIVE" && p.inventory > 0 && p.inventory <= 5 && (
+                      <span className="ml-2 text-xs font-medium px-2 py-0.5 rounded-full bg-amber-50 text-amber-700">
+                        Azalıyor
+                      </span>
+                    )}
+                  </td>
                   <td className="px-5 py-3">
                     <span
                       className={`px-2 py-0.5 rounded-full text-xs ${

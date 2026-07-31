@@ -7,6 +7,7 @@ import { and, eq } from "drizzle-orm";
 import { formatMoney } from "@/lib/store";
 import { updateOrderStatusAction } from "@/actions/orders";
 import { OrderStatusSelect } from "@/components/OrderStatusSelect";
+import { StatusBadge } from "@/components/admin/StatusChips";
 
 export default async function OrderDetailPage({
   params,
@@ -38,9 +39,21 @@ export default async function OrderDetailPage({
       <Link href={`/admin/${store}/orders`} className="text-sm text-neutral-500 hover:underline">
         ← Siparişler
       </Link>
-      <div className="flex items-center justify-between mt-2 mb-6">
+      <div className="flex items-center justify-between mt-2 mb-1">
         <h1 className="text-2xl font-bold">Sipariş #{order.id.slice(-8)}</h1>
         <OrderStatusSelect currentStatus={order.status} onChange={updateStatus} />
+      </div>
+      <div className="flex items-center gap-3 mb-6">
+        <StatusBadge status={order.status} />
+        <span className="text-sm text-neutral-500">
+          {new Date(order.createdAt).toLocaleDateString("tr-TR", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+        </span>
       </div>
 
       <div className="bg-white border border-neutral-200 rounded-xl p-6 mb-6">

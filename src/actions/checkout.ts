@@ -2,8 +2,8 @@
 
 import { z } from "zod";
 import { db } from "@/db";
-import { orders, orderItems, products } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { orders, orderItems, products, discounts } from "@/db/schema";
+import { and, eq } from "drizzle-orm";
 import { createId } from "@/lib/id";
 import { getStoreBySubdomain } from "@/lib/store";
 import { getOrCreateCartWithItems, clearCart } from "@/lib/cart";
@@ -50,6 +50,26 @@ export async function checkoutAction(
     return { error: "Sepetiniz boş" };
   }
 
+  // Optional discount code — validated server-side regardless of what the
+  // (client-controlled) form sent, and re-computed from the server-trusted
+  // subtotal so nothing about the discount amount is trusted from the client.
+  const rawCode = String(formData.get("discountCode") || "").trim().toUpperCase();
+  let discountTotal = 0;
+  if (rawCode) {
+    const [code] = await db
+      .select()
+      .from(discounts)
+      .where(and(eq(discounts.storeId, store.id), eq(discounts.code, rawCode), eq(discounts.active, true)))
+      .limit(1);
+    if (!code) {
+      return { fieldErrors: { discountCode: "Geçersiz veya süresi dolmuş indirim kodu" } };
+    }
+    discountTotal =
+      code.type === "PERCENTAGE" ? Math.round(subtotal * (code.value / 100) * 100) / 100 : code.value;
+    discountTotal = Math.min(discountTotal, subtotal);
+  }
+  const total = Math.max(0, subtotal - discountTotal);
+
   // Simulated payment: in production this is where you'd integrate a real
   // gateway (Stripe, iyzico, PayTR, ...). We mark the order as PAID directly.
   const orderId = createId("order");
@@ -66,8 +86,8 @@ export async function checkoutAction(
     }),
     status: "PAID",
     subtotal,
-    discountTotal: 0,
-    total: subtotal,
+    discountTotal,
+    total,
     currency: store.currency,
   });
 

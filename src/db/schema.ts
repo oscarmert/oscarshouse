@@ -68,6 +68,7 @@ export const categories = sqliteTable(
       .references(() => stores.id, { onDelete: "cascade" }),
     name: text("name").notNull(),
     slug: text("slug").notNull(),
+    imageUrl: text("image_url"),
     createdAt: text("created_at")
       .notNull()
       .default(sql`(current_timestamp)`),

@@ -4,13 +4,7 @@ import { db } from "@/db";
 import { orders } from "@/db/schema";
 import { desc, eq } from "drizzle-orm";
 import { formatMoney } from "@/lib/store";
-
-const STATUS_LABEL: Record<string, string> = {
-  PENDING: "Beklemede",
-  PAID: "Ödendi",
-  FULFILLED: "Kargolandı",
-  CANCELLED: "İptal",
-};
+import { StatusBadge } from "@/components/admin/StatusChips";
 
 export default async function OrdersPage({
   params,
@@ -51,7 +45,9 @@ export default async function OrdersPage({
                     <p className="text-neutral-500 text-xs">{o.customerEmail}</p>
                   </td>
                   <td className="px-5 py-3">{new Date(o.createdAt).toLocaleDateString("tr-TR")}</td>
-                  <td className="px-5 py-3">{STATUS_LABEL[o.status]}</td>
+                  <td className="px-5 py-3">
+                    <StatusBadge status={o.status} />
+                  </td>
                   <td className="px-5 py-3">{formatMoney(o.total, o.currency)}</td>
                   <td className="px-5 py-3 text-right">
                     <Link href={`/admin/${store}/orders/${o.id}`} className="text-neutral-600 hover:underline">

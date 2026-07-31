@@ -17,6 +17,8 @@ export default async function AdminLayout({
     { href: `/admin/${store}/products`, label: "Ürünler" },
     { href: `/admin/${store}/categories`, label: "Kategoriler" },
     { href: `/admin/${store}/orders`, label: "Siparişler" },
+    { href: `/admin/${store}/customers`, label: "Müşteriler" },
+    { href: `/admin/${store}/discounts`, label: "İndirim Kodları" },
     { href: `/admin/${store}/settings`, label: "Ayarlar" },
   ];
 
